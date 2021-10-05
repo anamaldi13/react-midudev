@@ -1,29 +1,34 @@
 //CUSTOM HOOKS
 
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import getUsers from "../services/getUsers";
+import ObjectContext from "../context/ObjectContext";
 
 /*Le vamos a dar una keyword por defecto*/
-export function useUsers ({keyword} = {keyword: null}){
-const [loading, setLoagind] = useState(false)
-const [users, setUser] = useState([])
 
-useEffect(function() {
-    setLoagind(true)
+export function useUsers({ keyword } = { keyword: null }) {
 
-    /* recuperamos la keyword del localStorage, 
-    Si la keyword que nos pasan por parámetro esta vacía, 
-    cogemos la que esta guardada en el localStorage(lastKeyword) */ 
-    const keywordToUse= keyword ? keyword: localStorage.getItem('lastKeyword')
-    
-    getUsers({keyword: keywordToUse})
-    .then(user => {
-        setUser(user)
-        setLoagind(false)
-        /*  guardamos la ultima keyword en el localStorage*/
-        localStorage.setItem('lastKeyword', keyword)
-    })
-}, [keyword])
+    const [loading, setLoading] = useState(false)
+    /* const [users, setUser] = useState([]) modifica solo el estado local de este Hook*/
+    /* Context: */
+    const {tasks, setTasks} = useContext(ObjectContext);
 
-return {loading, users}
+    const keywordToUse = keyword || localStorage.getItem('lastKeyword') || 'posts'
+
+    useEffect(function () {
+        setLoading(true)
+
+        /* Recuperamos la keyword del localStorage, 
+        Si la keyword que nos pasan por parámetro esta vacía, 
+        cogemos la que esta guardada en el localStorage(lastKeyword) */
+        getUsers(keyword)
+            .then(data =>  {
+                setTasks(data)
+                setLoading(false)
+                localStorage.setItem('lastKeyword', keyword)
+
+            })
+    }, [keyword, setTasks, keywordToUse])
+
+    return {tasks} 
 }

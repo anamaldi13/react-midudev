@@ -12,23 +12,27 @@ export default function Home() {
     const [path, pushlocation] = useLocation();
     /* devuelve un Array de 2 posiciones [path_donde_estamos, function]*/
 
-    const {loading, users} = useUsers()
 
     const handlSubmit = evt => {
         evt.preventDefault(); //para evitar que se recargue
         //Queremos que al buscar naveguemos a la palabra que hemos puesto en form
         //para ello usaremos un Hook que tiene Wouter -> useLocation
+        console.log("handlsubmit")
         pushlocation(`${keyword}`)
     }
 
     const handleChange = evt => {
         setkeyword(evt.target.value);
+        console.log("handleChange")
     }
+
+
 
     return (
         <>
             <form class="form-search" onSubmit={handlSubmit}>
                 <input class="form-search-input" onChange={handleChange} type="text" value={keyword} placeholder= "Buscar..."/>
+                <button>Buscar</button>
             </form>
             <h3 className="home-title">Usuarios más populares</h3>
 
